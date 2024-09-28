@@ -4,6 +4,7 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
-
+    <item name="colorPrimary" type="color">@color/teal</item>
+    <item name="colorPrimaryVariant" type="color">@color/teal</item>
     <style name="Theme.AjiraApp" parent="Base.Theme.AjiraApp" />
 </resources>

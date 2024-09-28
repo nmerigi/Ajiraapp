@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "588348812557",
+    "project_id": "ajira-app-4870c",
+    "storage_bucket": "ajira-app-4870c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588348812557:android:e6fcc1a383b8a233245444",
+        "android_client_info": {
+          "package_name": "com.example.ajiraapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1bkX2-mPHN8hanm_NNAFgj6FSqW2qD24"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
