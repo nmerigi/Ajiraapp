@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">Ajira app</string>
+
+    <string-array name="services_array">
+        <item>Cooking</item>
+        <item>Cleaning</item>
+        <item>Plumbing</item>
+        <item>Gardening</item>
+        <item>Moving</item>
+        <item>Mechanic</item>
+    </string-array>
+
+
 </resources>

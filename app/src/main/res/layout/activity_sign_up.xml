@@ -81,6 +81,7 @@
                     android:padding="8dp"
                     android:textColor="@color/black" />
 
+
                 <EditText
                     android:id="@+id/client_lastname"
                     android:layout_width="match_parent"
@@ -307,17 +308,32 @@
                         android:padding="8dp"
                         android:textColor="@color/black" />
 
-                    <EditText
-                        android:id="@+id/service"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/textinputLayout"
+                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="15dp"
+                        android:layout_height="50dp"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="3dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         android:background="@drawable/teal_border"
-                        android:drawableLeft="@drawable/baseline_work_24"
-                        android:drawablePadding="8dp"
-                        android:hint="Service"
-                        android:padding="8dp"
-                        android:textColor="@color/black" />
+                        app:startIconDrawable="@drawable/baseline_work_24">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/autocompleteTextView"
+                            android:layout_width="280dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_weight="1"
+                            android:inputType="none"
+                            android:text="Select Service"
+                            android:padding="4dp"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"/>
+                    </com.google.android.material.textfield.TextInputLayout>
 
                     <EditText
                         android:id="@+id/service_charge"
@@ -399,14 +415,16 @@
                         android:layout_marginTop="8dp"
                         android:text="No file selected" />
 
+
                 </LinearLayout>
 
                 <Button
                     android:id="@+id/signup_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_width="140dp"
+                    android:layout_height="50dp"
                     android:layout_marginTop="10dp"
                     android:backgroundTint="@color/teal"
+                    android:layout_gravity="center"
                     android:text="Sign Up"
                     android:textSize="18sp"
                     app:cornerRadius="20dp" />
@@ -419,7 +437,7 @@
                     android:layout_marginTop="1dp"
                     android:text="Already a user? Login"
                     android:textColor="@color/teal"
-                    android:textSize="18sp" />
+                    android:textSize="12sp" />
 
             </LinearLayout>
         </ScrollView>
