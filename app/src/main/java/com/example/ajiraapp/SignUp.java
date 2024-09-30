@@ -1,34 +1,228 @@
 package com.example.ajiraapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 public class SignUp extends AppCompatActivity {
+
+    // Declare Firebase components and form elements
+    private FirebaseDatabase database;
+    private DatabaseReference reference;
+    private StorageReference storageReference;
+
+    private EditText clientFirstname, clientLastname, clientDob, clientEmail, clientPhonenumber, clientLocation, clientPassword;
+    private EditText expertFirstname, expertLastname, expertDob, expertEmail, expertServiceCharge, expertPhonenumber, expertLocation, expertPassword;
+    private RadioButton clientRadioMale, clientRadioFemale, clientRadioOther;
+    private RadioButton expertRadioMale, expertRadioFemale, expertRadioOther;
+    private RadioGroup clientGenderRadioGroup, expertGenderRadioGroup;
+    private RadioGroup signupRadioGroup;
+    private RadioButton radioClient, radioExpert;
+    private Button signupButton, client_upload_id_button, client_upload_good_conduct_button, expert_upload_id_button, expert_upload_good_conduct_button;
+    private TextView clientIdFilename, clientGoodConductFilename;
+    private TextView expertIdFilename, expertGoodConductFilename;
+    private TextInputLayout textInputLayout;
+    private AutoCompleteTextView autocompleteTextView;
+
+    private Uri clientUploadIdUri, clientUploadGoodConductUri, expertUploadIdUri, expertUploadGoodConductUri;
+    private int FILE_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_sign_up);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Initialize Firebase Storage and Database
+        storageReference = FirebaseStorage.getInstance().getReference();
+        database = FirebaseDatabase.getInstance();
+
+        // Client form container
+        LinearLayout clientFormContainer = findViewById(R.id.client_signup_container);
+
+        // Expert form container
+        LinearLayout expertFormContainer = findViewById(R.id.expert_signup_container);
+
+        // Initialize UI elements
+        initializeElements();
+
+        // Set the initial visibility of the containers
+        clientFormContainer.setVisibility(View.VISIBLE);
+        expertFormContainer.setVisibility(View.GONE);
+
+        // Setup the signup group listener for client/expert
+        signupRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radio_client) {
+                clientFormContainer.setVisibility(View.VISIBLE);
+                expertFormContainer.setVisibility(View.GONE);
+            } else if (checkedId == R.id.radio_expert) {
+                clientFormContainer.setVisibility(View.GONE);
+                expertFormContainer.setVisibility(View.VISIBLE);
+            }
         });
+
+        // Handle file upload buttons
+        findViewById(R.id.client_upload_id_button).setOnClickListener(v -> startFileSelection(1));
+        findViewById(R.id.client_upload_good_conduct_button).setOnClickListener(v -> startFileSelection(2));
+        findViewById(R.id.upload_id_button).setOnClickListener(v -> startFileSelection(3));
+        findViewById(R.id.upload_good_conduct_button).setOnClickListener(v -> startFileSelection(4));
+
+        // Handle signup button click
+        findViewById(R.id.signup_button).setOnClickListener(v -> handleSignup());
+    }
+
+    private void startFileSelection(int requestCode) {
+        FILE_REQUEST_CODE = requestCode;
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("application/pdf");
+        startActivityForResult(intent, FILE_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri fileUri = data.getData();
+            switch (requestCode) {
+                case 1: uploadFile(fileUri, "client_id_documents/", clientIdFilename); break;
+                case 2: uploadFile(fileUri, "client_good_conduct_documents/", clientGoodConductFilename); break;
+                case 3: uploadFile(fileUri, "expert_id_documents/", expertIdFilename); break;
+                case 4: uploadFile(fileUri, "expert_good_conduct_documents/", expertGoodConductFilename); break;
+            }
+        }
+    }
+
+    private void uploadFile(Uri fileUri, String path, TextView fileNameView) {
+        String fileName = fileUri.getLastPathSegment();
+        StorageReference fileRef = storageReference.child(path + fileName);
+        fileRef.putFile(fileUri).addOnSuccessListener(taskSnapshot -> {
+            fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                fileNameView.setText(uri.toString());
+                Toast.makeText(this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
+            });
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "File upload failed", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void handleSignup() {
+        // Get user inputs and store in Firebase
+        if (((RadioButton) findViewById(R.id.radio_client)).isChecked()) {
+            String firstname = clientFirstname.getText().toString();
+            String lastname = clientLastname.getText().toString();
+            String gender = getSelectedGender(clientGenderRadioGroup);
+            String email = clientEmail.getText().toString();
+            String dob = clientDob.getText().toString();
+            String phonenumber = clientPhonenumber.getText().toString();
+            String location = clientLocation.getText().toString();
+            String password = clientPassword.getText().toString();
+            String userid_upload = clientIdFilename.getText().toString();
+            String goodconduct_upload = clientGoodConductFilename.getText().toString();
+
+            // Create a new client object
+            Client client = new Client(firstname, lastname, email, gender, dob, phonenumber, location, password, userid_upload, goodconduct_upload);
+
+            reference = database.getReference("clients");
+            reference.push().setValue(client);
+        } else {
+            String firstname = expertFirstname.getText().toString();
+            String lastname = expertLastname.getText().toString();
+            String gender = getSelectedGender(expertGenderRadioGroup);
+            String email = expertEmail.getText().toString();
+            String dob = expertDob.getText().toString();
+            String phonenumber = expertPhonenumber.getText().toString();
+            String location = expertLocation.getText().toString();
+            String password = expertPassword.getText().toString();
+            String service = autocompleteTextView.getText().toString();
+            String servicecharge = expertServiceCharge.getText().toString();
+            String userid_upload = expertIdFilename.getText().toString();
+            String goodconduct_upload = expertGoodConductFilename.getText().toString();
+
+            Expert expert = new Expert(firstname, lastname, email, gender, dob, phonenumber, location, password, service, servicecharge, userid_upload, goodconduct_upload);
+
+            reference = database.getReference("experts");
+            reference.push().setValue(expert);
+        }
+    }
+
+    // Method to initialize the UI elements
+    private void initializeElements() {
+        clientFirstname = findViewById(R.id.client_firstname);
+        clientLastname = findViewById(R.id.client_lastname);
+        clientDob = findViewById(R.id.client_dob);
+        clientEmail = findViewById(R.id.client_email);
+        clientPhonenumber = findViewById(R.id.client_phonenumber);
+        clientLocation = findViewById(R.id.client_location);
+        clientPassword = findViewById(R.id.client_Password);
+
+        expertFirstname = findViewById(R.id.firstname);
+        expertLastname = findViewById(R.id.lastname);
+        expertDob = findViewById(R.id.dob);
+        expertEmail = findViewById(R.id.email);
+        expertServiceCharge = findViewById(R.id.service_charge);
+        expertPhonenumber = findViewById(R.id.phonenumber);
+        expertLocation = findViewById(R.id.location);
+        expertPassword = findViewById(R.id.Password);
+
+        clientRadioMale = findViewById(R.id.client_radio_male);
+        clientRadioFemale = findViewById(R.id.client_radio_female);
+        clientRadioOther = findViewById(R.id.client_radio_other);
+
+        expertRadioMale = findViewById(R.id.radio_male);
+        expertRadioFemale = findViewById(R.id.radio_female);
+        expertRadioOther = findViewById(R.id.radio_other);
+
+        clientGenderRadioGroup = findViewById(R.id.client_gender_radio_group);
+        expertGenderRadioGroup = findViewById(R.id.gender_radio_group);
+
+        signupRadioGroup = findViewById(R.id.signup_radio_group);
+        radioClient = findViewById(R.id.radio_client);
+        radioExpert = findViewById(R.id.radio_expert);
+
+        signupButton = findViewById(R.id.signup_button);
+
+        clientIdFilename = findViewById(R.id.client_id_filename);
+        clientGoodConductFilename = findViewById(R.id.client_good_conduct_filename);
+        expertIdFilename = findViewById(R.id.id_filename);
+        expertGoodConductFilename = findViewById(R.id.good_conduct_filename);
+        client_upload_id_button=findViewById(R.id.client_upload_id_button);
+        client_upload_good_conduct_button=findViewById(R.id.client_upload_good_conduct_button);
+        expert_upload_id_button=findViewById(R.id.upload_id_button);
+        expert_upload_good_conduct_button=findViewById(R.id.upload_good_conduct_button);
+
+        textInputLayout = findViewById(R.id.textinputLayout);
+        autocompleteTextView = findViewById(R.id.autocompleteTextView);
 
         String[] services_array = getResources().getStringArray(R.array.services_array);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.dropdown, services_array);
-        TextInputLayout textInputLayout = findViewById(R.id.textinputLayout);
-        MaterialAutoCompleteTextView autoCompleteTextView = textInputLayout.findViewById(R.id.autocompleteTextView);
-        autoCompleteTextView.setAdapter(arrayAdapter);
+        autocompleteTextView.setAdapter(arrayAdapter);
+    }
+
+    private String getSelectedGender(RadioGroup genderRadioGroup) {
+        int selectedId = genderRadioGroup.getCheckedRadioButtonId();
+        if (selectedId != -1) {
+            RadioButton selectedGenderRadioButton = findViewById(selectedId);
+            return selectedGenderRadioButton.getText().toString();
+        }
+        return "Not Selected";
     }
 }

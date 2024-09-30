@@ -63,7 +63,7 @@
 
                 <!-- Input fields section -->
             <LinearLayout
-                android:id="@+id/client_signup"
+                android:id="@+id/client_signup_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -222,7 +222,7 @@
             </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/expert_signup"
+                    android:id="@+id/expert_signup_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -312,28 +312,33 @@
                         android:id="@+id/textinputLayout"
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="3dp"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="3dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:background="@drawable/teal_border"
-                        app:startIconDrawable="@drawable/baseline_work_24">
+                        android:layout_height="45dp"
+                        android:layout_marginStart="2dp"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:layout_marginBottom="15dp"
+                        app:boxBackgroundMode="outline"
+                        app:boxCornerRadiusTopStart="12dp"
+                        app:boxCornerRadiusTopEnd="12dp"
+                        app:boxCornerRadiusBottomStart="12dp"
+                        app:boxCornerRadiusBottomEnd="12dp"
+                        app:boxStrokeColor="@color/teal"
+                        app:boxStrokeWidth="2dp"
+                        android:background="@drawable/teal_border">
 
                         <AutoCompleteTextView
                             android:id="@+id/autocompleteTextView"
-                            android:layout_width="280dp"
-                            android:layout_height="40dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:inputType="none"
-                            android:text="Select Service"
-                            android:padding="4dp"
-                            android:textColor="@color/black"
-                            android:textSize="16sp"/>
+                            android:hint="Select Service"
+                            android:textColorHint="@android:color/darker_gray"
+                            android:padding="5dp"
+                            android:background="@android:color/transparent"
+                            android:textSize="18dp"
+                            />
                     </com.google.android.material.textfield.TextInputLayout>
+
 
                     <EditText
                         android:id="@+id/service_charge"
