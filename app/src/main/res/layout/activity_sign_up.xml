@@ -185,7 +185,8 @@
                     android:drawablePadding="8dp"
                     android:hint="Password"
                     android:padding="8dp"
-                    android:textColor="@color/black" />
+                    android:textColor="@color/black"
+                    android:inputType="textPassword"/>
 
                 <!-- Image upload section -->
                 <Button
@@ -386,7 +387,8 @@
                         android:drawablePadding="8dp"
                         android:hint="Password"
                         android:padding="8dp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:inputType="textPassword"/>
 
                     <!-- Image upload section -->
                     <Button

@@ -39,7 +39,7 @@ public class SignUp extends AppCompatActivity {
     private RadioGroup signupRadioGroup;
     private RadioButton radioClient, radioExpert;
     private Button signupButton, client_upload_id_button, client_upload_good_conduct_button, expert_upload_id_button, expert_upload_good_conduct_button;
-    private TextView clientIdFilename, clientGoodConductFilename;
+    private TextView clientIdFilename, clientGoodConductFilename, loginRedirectText;
     private TextView expertIdFilename, expertGoodConductFilename;
     private TextInputLayout textInputLayout;
     private AutoCompleteTextView autocompleteTextView;
@@ -88,12 +88,20 @@ public class SignUp extends AppCompatActivity {
 
         // Handle signup button click
         findViewById(R.id.signup_button).setOnClickListener(v -> handleSignup());
+
+        loginRedirectText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SignUp.this, LogIn.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void startFileSelection(int requestCode) {
         FILE_REQUEST_CODE = requestCode;
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("application/pdf");
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
         startActivityForResult(intent, FILE_REQUEST_CODE);
     }
 
@@ -103,10 +111,10 @@ public class SignUp extends AppCompatActivity {
         if (resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri fileUri = data.getData();
             switch (requestCode) {
-                case 1: uploadFile(fileUri, "client_id_documents/", clientIdFilename); break;
-                case 2: uploadFile(fileUri, "client_good_conduct_documents/", clientGoodConductFilename); break;
-                case 3: uploadFile(fileUri, "expert_id_documents/", expertIdFilename); break;
-                case 4: uploadFile(fileUri, "expert_good_conduct_documents/", expertGoodConductFilename); break;
+                case 1: uploadFile(fileUri, "client_id_images/", clientIdFilename); break;
+                case 2: uploadFile(fileUri, "client_good_conduct_images/", clientGoodConductFilename); break;
+                case 3: uploadFile(fileUri, "expert_id_images/", expertIdFilename); break;
+                case 4: uploadFile(fileUri, "expert_good_conduct_images/", expertGoodConductFilename); break;
             }
         }
     }
@@ -116,8 +124,14 @@ public class SignUp extends AppCompatActivity {
         StorageReference fileRef = storageReference.child(path + fileName);
         fileRef.putFile(fileUri).addOnSuccessListener(taskSnapshot -> {
             fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                fileNameView.setText(uri.toString());
+                // Extract the file name from the URL
+                String[] urlParts = uri.toString().split("/");
+                String shortFileName = urlParts[urlParts.length - 1].split("\\?")[0]; // Get only the file name
+
+                // Set the shortened file name in the TextView
+                fileNameView.setText(shortFileName);
                 Toast.makeText(this, "File uploaded successfully", Toast.LENGTH_SHORT).show();
+
             });
         }).addOnFailureListener(e -> {
             Toast.makeText(this, "File upload failed", Toast.LENGTH_SHORT).show();
@@ -130,11 +144,11 @@ public class SignUp extends AppCompatActivity {
             String firstname = clientFirstname.getText().toString();
             String lastname = clientLastname.getText().toString();
             String gender = getSelectedGender(clientGenderRadioGroup);
-            String email = clientEmail.getText().toString();
+            String email = clientEmail.getText().toString().trim();
             String dob = clientDob.getText().toString();
             String phonenumber = clientPhonenumber.getText().toString();
             String location = clientLocation.getText().toString();
-            String password = clientPassword.getText().toString();
+            String password = clientPassword.getText().toString().trim();
             String userid_upload = clientIdFilename.getText().toString();
             String goodconduct_upload = clientGoodConductFilename.getText().toString();
 
@@ -142,7 +156,15 @@ public class SignUp extends AppCompatActivity {
             Client client = new Client(firstname, lastname, email, gender, dob, phonenumber, location, password, userid_upload, goodconduct_upload);
 
             reference = database.getReference("clients");
-            reference.push().setValue(client);
+            reference.push().setValue(client).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(SignUp.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent= new Intent(SignUp.this, Verification_Notification.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(SignUp.this, "Sign Up Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         } else {
             String firstname = expertFirstname.getText().toString();
             String lastname = expertLastname.getText().toString();
@@ -160,9 +182,19 @@ public class SignUp extends AppCompatActivity {
             Expert expert = new Expert(firstname, lastname, email, gender, dob, phonenumber, location, password, service, servicecharge, userid_upload, goodconduct_upload);
 
             reference = database.getReference("experts");
-            reference.push().setValue(expert);
+            reference.push().setValue(expert).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(SignUp.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
+                    Intent intent= new Intent(SignUp.this, Verification_Notification.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(SignUp.this, "Sign Up Failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-    }
+
+
+}
 
     // Method to initialize the UI elements
     private void initializeElements() {
@@ -199,6 +231,7 @@ public class SignUp extends AppCompatActivity {
         radioExpert = findViewById(R.id.radio_expert);
 
         signupButton = findViewById(R.id.signup_button);
+        loginRedirectText= findViewById(R.id.loginRedirectText);
 
         clientIdFilename = findViewById(R.id.client_id_filename);
         clientGoodConductFilename = findViewById(R.id.client_good_conduct_filename);
