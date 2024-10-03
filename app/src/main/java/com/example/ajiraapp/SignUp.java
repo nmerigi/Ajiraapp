@@ -81,13 +81,13 @@ public class SignUp extends AppCompatActivity {
         });
 
         // Handle file upload buttons
-        findViewById(R.id.client_upload_id_button).setOnClickListener(v -> startFileSelection(1));
-        findViewById(R.id.client_upload_good_conduct_button).setOnClickListener(v -> startFileSelection(2));
-        findViewById(R.id.upload_id_button).setOnClickListener(v -> startFileSelection(3));
-        findViewById(R.id.upload_good_conduct_button).setOnClickListener(v -> startFileSelection(4));
+        client_upload_id_button.setOnClickListener(v -> startFileSelection(1));
+        client_upload_good_conduct_button.setOnClickListener(v -> startFileSelection(2));
+        expert_upload_id_button.setOnClickListener(v -> startFileSelection(3));
+        expert_upload_good_conduct_button.setOnClickListener(v -> startFileSelection(4));
 
         // Handle signup button click
-        findViewById(R.id.signup_button).setOnClickListener(v -> handleSignup());
+        signupButton.setOnClickListener(v -> handleSignup());
 
         loginRedirectText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,7 +140,7 @@ public class SignUp extends AppCompatActivity {
 
     private void handleSignup() {
         // Get user inputs and store in Firebase
-        if (((RadioButton) findViewById(R.id.radio_client)).isChecked()) {
+        if (radioClient.isChecked()) {
             String firstname = clientFirstname.getText().toString();
             String lastname = clientLastname.getText().toString();
             String gender = getSelectedGender(clientGenderRadioGroup);

@@ -61,7 +61,7 @@
                         android:text="Expert" />
                 </RadioGroup>
 
-                <!-- Input fields section -->
+                <!--  (CLIENT) Input fields section -->
             <LinearLayout
                 android:id="@+id/client_signup_container"
                 android:layout_width="match_parent"
@@ -221,6 +221,8 @@
                     android:text="No file selected" />
 
             </LinearLayout>
+
+                <!--  (EXPERT) Input fields section -->
 
                 <LinearLayout
                     android:id="@+id/expert_signup_container"
