@@ -16,6 +16,27 @@
         android:theme="@style/Theme.AjiraApp"
         tools:targetApi="31">
         <activity
+            android:name=".NotifyExpert"
+            android:exported="false" />
+        <activity
+            android:name=".PlumbingList"
+            android:exported="false" />
+        <activity
+            android:name=".MovingList"
+            android:exported="false" />
+        <activity
+            android:name=".GardeningList"
+            android:exported="false" />
+        <activity
+            android:name=".MechanicList"
+            android:exported="false" />
+        <activity
+            android:name=".CookingList"
+            android:exported="false" />
+        <activity
+            android:name=".CleaningList"
+            android:exported="false" />
+        <activity
             android:name=".Verification_Notification"
             android:exported="false" />
         <activity

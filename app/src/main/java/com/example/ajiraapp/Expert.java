@@ -99,6 +99,7 @@ public class Expert {
         this.phonenumber = phonenumber;
     }
 
+
     public Expert(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String service, String servicecharge, String userid_upload, String goodconduct_upload) {
         this.firstname = firstname;
         this.lastname = lastname;
@@ -115,5 +116,9 @@ public class Expert {
     }
 
     public Expert() {
+    }
+
+    public String getFullName() {
+        return firstname + " " + lastname;
     }
 }

@@ -89,6 +89,7 @@ public class LogIn extends AppCompatActivity {
                                     if (client.getPassword().equals(password)) {
                                         Toast.makeText(LogIn.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(LogIn.this, ClientHomePage.class);
+                                        intent.putExtra("CLIENT_PHONE_NUMBER", client.getPhonenumber());
                                         startActivity(intent);
                                         finish();
                                         return;
@@ -111,6 +112,7 @@ public class LogIn extends AppCompatActivity {
                                                     if (expertUser.getPassword().equals(password)) {
                                                         Toast.makeText(LogIn.this, "Login Successful", Toast.LENGTH_SHORT).show();
                                                         Intent intent = new Intent(LogIn.this, ExpertHomePage.class);
+                                                        intent.putExtra("EXPERT_PHONE_NUMBER", expertUser.getPhonenumber());
                                                         startActivity(intent);
                                                         finish();
                                                         return;
