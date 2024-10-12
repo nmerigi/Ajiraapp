@@ -34,6 +34,7 @@ public class ExpertList_adapter extends RecyclerView.Adapter<ExpertList_adapter.
         Expert expert = list.get(position);
         holder.expert_name.setText(expert.getFullName());
         holder.service_charge.setText(expert.getServicecharge());
+        holder.expert_rating.setText(String.valueOf(expert.getRating()));
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, NotifyExpert.class);
@@ -41,6 +42,7 @@ public class ExpertList_adapter extends RecyclerView.Adapter<ExpertList_adapter.
             intent.putExtra("EXPERT_CONTACT", expert.getPhonenumber());
             intent.putExtra("EXPERT_SERVICE", expert.getService());
             intent.putExtra("EXPERT_CHARGE", expert.getServicecharge());
+            intent.putExtra("EXPERT_RATING",expert.getRating());
             intent.putExtra("CLIENT_PHONE_NUMBER", clientPhoneNumber);
             context.startActivity(intent);
         });
@@ -54,13 +56,14 @@ public class ExpertList_adapter extends RecyclerView.Adapter<ExpertList_adapter.
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        TextView expert_name, service_charge;
+        TextView expert_name, service_charge, expert_rating;
 
         public MyViewHolder(@NonNull View itemView){
 
             super(itemView);
             expert_name= itemView.findViewById(R.id.expert_name);
             service_charge= itemView.findViewById(R.id.service_charge);
+            expert_rating=itemView.findViewById(R.id.expert_rating);
         }
 
     }
