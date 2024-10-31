@@ -153,7 +153,7 @@ public class SignUp extends AppCompatActivity {
             String goodconduct_upload = clientGoodConductFilename.getText().toString();
 
             // Create a new client object
-            Client client = new Client(firstname, lastname, email, gender, dob, phonenumber, location, password, userid_upload, goodconduct_upload);
+            Client client = new Client(firstname, lastname, email, gender, dob, phonenumber, location, password, userid_upload, goodconduct_upload, 5.0);
 
             reference = database.getReference("clients");
             reference.push().setValue(client).addOnCompleteListener(task -> {
@@ -179,7 +179,8 @@ public class SignUp extends AppCompatActivity {
             String userid_upload = expertIdFilename.getText().toString();
             String goodconduct_upload = expertGoodConductFilename.getText().toString();
 
-            Expert expert = new Expert(firstname, lastname, email, gender, dob, phonenumber, location, password, service, servicecharge, userid_upload, goodconduct_upload);
+
+            Expert expert = new Expert(firstname, lastname, email, gender, dob, phonenumber, location, password, service, servicecharge, userid_upload, goodconduct_upload,5.0);
 
             reference = database.getReference("experts");
             reference.push().setValue(expert).addOnCompleteListener(task -> {

@@ -2,6 +2,7 @@ package com.example.ajiraapp;
 
 public class Client {
     String firstname, lastname, gender, email, dob, phonenumber, location,password, userid_upload, goodconduct_upload;
+    double rating;
 
     public String getLocation() {
         return location;
@@ -83,7 +84,15 @@ public class Client {
         this.phonenumber = phonenumber;
     }
 
-    public Client(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String userid_upload, String goodconduct_upload) {
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public Client(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String userid_upload, String goodconduct_upload, double rating) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -94,6 +103,7 @@ public class Client {
         this.password = password;
         this.userid_upload = userid_upload;
         this.goodconduct_upload = goodconduct_upload;
+        this.rating = 5.0;
     }
 
     public Client() {

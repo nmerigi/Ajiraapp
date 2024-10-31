@@ -2,7 +2,7 @@ package com.example.ajiraapp;
 
 public class Expert {
     String firstname, lastname, gender, email, dob, phonenumber, location,password, service, servicecharge, userid_upload, goodconduct_upload;
-    private float rating;
+    private double rating;
 
     public String getLocation() {
         return location;
@@ -100,15 +100,15 @@ public class Expert {
         this.phonenumber = phonenumber;
     }
 
-    public float getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(float rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 
-    public Expert(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String service, String servicecharge, String userid_upload, String goodconduct_upload) {
+    public Expert(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String service, String servicecharge, String userid_upload, String goodconduct_upload, double rating) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -121,6 +121,8 @@ public class Expert {
         this.servicecharge = servicecharge;
         this.userid_upload = userid_upload;
         this.goodconduct_upload = goodconduct_upload;
+        this.rating= 5.0;
+
     }
 
     public Expert() {
