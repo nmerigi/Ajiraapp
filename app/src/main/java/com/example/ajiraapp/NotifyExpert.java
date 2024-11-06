@@ -14,6 +14,26 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+
+import java.util.UUID;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 import java.util.UUID;
 
@@ -21,11 +41,11 @@ public class NotifyExpert extends AppCompatActivity {
     TextView expert_nameview, expert_serviceview, service_chargeview;
     Button create_jobButton;
     DatabaseReference jobsDatabase;
+    String jobId;  // Store the job ID to listen for updates
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_notify_expert);
 
         expert_nameview = findViewById(R.id.expert_name);
@@ -33,11 +53,6 @@ public class NotifyExpert extends AppCompatActivity {
         service_chargeview = findViewById(R.id.service_charge);
         create_jobButton = findViewById(R.id.create_jobButton);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
         Intent intent = getIntent();
         String expertName = intent.getStringExtra("EXPERT_NAME");
         String expertService = intent.getStringExtra("EXPERT_SERVICE");
@@ -62,15 +77,13 @@ public class NotifyExpert extends AppCompatActivity {
             } else if (!isExpertPhoneNumberValid) {
                 Toast.makeText(NotifyExpert.this, "Expert phone number is missing.", Toast.LENGTH_LONG).show();
             } else {
-
                 createJob(expertPhoneNumber, clientPhoneNumber, expertName);
             }
         });
-
     }
 
-    private void createJob(String expertPhoneNumber,String clientPhoneNumber, String expertName){
-        String jobId = UUID.randomUUID().toString();
+    private void createJob(String expertPhoneNumber, String clientPhoneNumber, String expertName) {
+        jobId = UUID.randomUUID().toString();  // Generate a unique job ID
         String status = "Pending";
 
         Jobs job = new Jobs(jobId, clientPhoneNumber, expertPhoneNumber, status);
@@ -78,11 +91,50 @@ public class NotifyExpert extends AppCompatActivity {
         jobsDatabase.child(jobId).setValue(job).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(this, expertName + " has been notified of your job request", Toast.LENGTH_LONG).show();
+
+                // Now, let's start listening for job status changes
+                listenForJobStatusChanges( expertName);
             } else {
                 Toast.makeText(NotifyExpert.this, "Failed to create job.", Toast.LENGTH_LONG).show();
             }
         });
-
     }
+
+    private void listenForJobStatusChanges(String expertName) {
+        // Add a listener to the job status
+        jobsDatabase.child(jobId).child("status").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String jobStatus = snapshot.getValue(String.class);
+
+                if (jobStatus != null && jobStatus.equals("Accepted")) {
+                    // If the job status isAccepted, notify the client
+                    showJobAcceptedPopup(expertName);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Handle error if the listener is cancelled
+                Toast.makeText(NotifyExpert.this, "Failed to listen for status changes.", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void showJobAcceptedPopup(String expertName) {
+        new AlertDialog.Builder(NotifyExpert.this)
+                .setTitle("Job Accepted")
+                .setMessage(expertName + " has accepted the job!")
+                .setPositiveButton("OK", (dialog, which) -> {
+                    dialog.dismiss();
+
+                    Intent intent = new Intent(NotifyExpert.this, WorkInProgressClient.class);
+                    intent.putExtra("JOB_ID", jobId);
+                    startActivity(intent);
+                })
+                .setCancelable(false)
+                .show();
+    }
+
 
 }

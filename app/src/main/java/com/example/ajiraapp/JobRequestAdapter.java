@@ -1,13 +1,23 @@
 package com.example.ajiraapp;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -21,15 +31,19 @@ import java.util.List;
 public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.JobRequestViewHolder> {
     private List<Jobs> jobRequests;
     private DatabaseReference clientsRef;
+    private DatabaseReference expertsRef;
     private Context context;
 
-    // Constructor accepting a list of JobRequest
+
+    // accepting a list of JobRequest
     public JobRequestAdapter(List<Jobs> jobRequests , Context context) {
         this.jobRequests = jobRequests;
         this.context = context;
         this.clientsRef = FirebaseDatabase.getInstance().getReference("clients");
+        this.expertsRef = FirebaseDatabase.getInstance().getReference("experts");
     }
 
+    //inflates clientinfo xml that will now show each job
     @NonNull
     @Override
     public JobRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,7 +53,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
 
     @Override
     public void onBindViewHolder(@NonNull JobRequestViewHolder holder, int position) {
-        Jobs jobRequest = jobRequests.get(position);
+        Jobs jobRequest = jobRequests.get(position);  //sooo in jobs list access job in a certain position eg. position 4
 
         clientsRef.orderByChild("phonenumber").equalTo(jobRequest.getClientPhoneNumber())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -60,6 +74,53 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
                             holder.clientLocation.setText(clientLocation);
                             holder.clientRating.setText(clientRating);
 
+                            //for notifications letsssss get the client token
+                            //String clientFCMToken = clientSnapshot.child("fcmToken").getValue(String.class);
+
+                            expertsRef.orderByChild("phonenumber").equalTo(jobRequest.getExpertPhoneNumber())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot expertSnapshot) {
+                                            if (expertSnapshot.exists()) {
+                                                DataSnapshot expertDetails = expertSnapshot.getChildren().iterator().next();
+                                                String expertName = expertDetails.child("firstname").getValue(String.class);
+
+                                                // Set accept button click listener with expert's name
+                                                holder.accept_button.setOnClickListener(v -> {
+                                                    String jobId = jobRequest.getjobId();  // Ensure jobId is correctly retrieved from jobRequest
+                                                    DatabaseReference jobRef = FirebaseDatabase.getInstance().getReference("Jobs").child(jobId);
+
+                                                    // Update the status to "Accepted"
+                                                    jobRef.child("status").setValue("Accepted").addOnCompleteListener(task -> {
+                                                        if (task.isSuccessful()) {
+                                                            Toast.makeText(context, "Job status updated to 'Accepted'", Toast.LENGTH_SHORT).show();
+
+                                                            Intent intent = new Intent(context, WorkInProgressExpert.class);
+                                                            intent.putExtra("JOB_ID", jobId);
+                                                            intent.putExtra("EXPERT_NAME", expertName);
+                                                            context.startActivity(intent);
+
+                                                            Log.d("JobRequestAdapter", "Job status updated to 'Accepted'");
+                                                        } else {
+                                                            Log.e("JobRequestAdapter", "Failed to update job status.");
+                                                        }
+                                                    });
+
+
+                                                });
+
+                                            } else {
+                                                Log.e("JobRequestAdapter", "Expert not found.");
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+                                            Log.e("JobRequestAdapter", "Error fetching expert data: " + error.getMessage());
+                                        }
+                                    });
+
+
                         } else {
                             holder.clientName.setText("Unknown");
                             holder.clientLocation.setText("Unknown");
@@ -77,6 +138,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
 
     }
 
+
     @Override
     public int getItemCount() {
         return jobRequests.size();
@@ -84,12 +146,15 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
 
     public static class JobRequestViewHolder extends RecyclerView.ViewHolder {
         TextView clientName, clientLocation, clientRating;
+        Button accept_button;
 
         public JobRequestViewHolder(@NonNull View itemView) {
             super(itemView);
             clientName = itemView.findViewById(R.id.ClientName);
             clientLocation = itemView.findViewById(R.id.Location);
             clientRating = itemView.findViewById(R.id.Rating);
+            accept_button= itemView.findViewById(R.id.accept_button);
         }
     }
+
 }

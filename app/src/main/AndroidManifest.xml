@@ -16,6 +16,18 @@
         android:theme="@style/Theme.AjiraApp"
         tools:targetApi="31">
         <activity
+            android:name=".Expert_Rating"
+            android:exported="false" />
+        <activity
+            android:name=".Client_RatingandPayment"
+            android:exported="false" />
+        <activity
+            android:name=".WorkInProgressClient"
+            android:exported="false" />
+        <activity
+            android:name=".WorkInProgressExpert"
+            android:exported="false" />
+        <activity
             android:name=".NotifyExpert"
             android:exported="false" />
         <activity

@@ -1,9 +1,45 @@
 package com.example.ajiraapp;
 
 public class Client {
-    String firstname, lastname, gender, email, dob, phonenumber, location,password, userid_upload, goodconduct_upload;
+    String firstname, lastname, gender, email, dob, phonenumber, location, password, userid_upload, goodconduct_upload, fcmToken;
     double rating;
 
+    // Constructor for sign-up (without FCM token)
+    public Client(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String userid_upload, String goodconduct_upload, double rating) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.gender = gender;
+        this.dob = dob;
+        this.phonenumber = phonenumber;
+        this.location = location;
+        this.password = password;
+        this.userid_upload = userid_upload;
+        this.goodconduct_upload = goodconduct_upload;
+        this.rating = 5.0; // Default rating
+    }
+
+    // Constructor for login (with FCM token)
+    public Client(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String userid_upload, String goodconduct_upload, String fcmToken, double rating) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.gender = gender;
+        this.dob = dob;
+        this.phonenumber = phonenumber;
+        this.location = location;
+        this.password = password;
+        this.userid_upload = userid_upload;
+        this.goodconduct_upload = goodconduct_upload;
+        this.fcmToken = fcmToken;
+        this.rating = rating;
+    }
+
+    // Default constructor
+    public Client() {
+    }
+
+    // Getters and Setters
     public String getLocation() {
         return location;
     }
@@ -92,20 +128,11 @@ public class Client {
         this.rating = rating;
     }
 
-    public Client(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String userid_upload, String goodconduct_upload, double rating) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.gender = gender;
-        this.dob = dob;
-        this.phonenumber = phonenumber;
-        this.location = location;
-        this.password = password;
-        this.userid_upload = userid_upload;
-        this.goodconduct_upload = goodconduct_upload;
-        this.rating = 5.0;
+    public String getFcmToken() {
+        return fcmToken;
     }
 
-    public Client() {
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 }

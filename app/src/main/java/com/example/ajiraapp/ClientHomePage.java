@@ -2,6 +2,7 @@ package com.example.ajiraapp;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -10,6 +11,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 public class ClientHomePage extends AppCompatActivity {
     private CardView cleaningCard, cookingCard, mechanicCard, gardeningCard, movingCard, plumbingCard;
@@ -85,10 +88,5 @@ public class ClientHomePage extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
-
-
     }
 }

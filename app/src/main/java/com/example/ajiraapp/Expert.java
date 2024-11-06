@@ -1,7 +1,7 @@
 package com.example.ajiraapp;
 
 public class Expert {
-    String firstname, lastname, gender, email, dob, phonenumber, location,password, service, servicecharge, userid_upload, goodconduct_upload;
+    String firstname, lastname, gender, email, dob, phonenumber, location,password, service, servicecharge, userid_upload, goodconduct_upload, fcmToken;
     private double rating;
 
     public String getLocation() {
@@ -108,6 +108,14 @@ public class Expert {
         this.rating = rating;
     }
 
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
+
     public Expert(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String service, String servicecharge, String userid_upload, String goodconduct_upload, double rating) {
         this.firstname = firstname;
         this.lastname = lastname;
@@ -123,6 +131,21 @@ public class Expert {
         this.goodconduct_upload = goodconduct_upload;
         this.rating= 5.0;
 
+    }
+
+    public Expert(String firstname, String lastname, String email, String gender, String dob, String phonenumber, String location, String password, String userid_upload, String goodconduct_upload, String fcmToken, double rating) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.gender = gender;
+        this.dob = dob;
+        this.phonenumber = phonenumber;
+        this.location = location;
+        this.password = password;
+        this.userid_upload = userid_upload;
+        this.goodconduct_upload = goodconduct_upload;
+        this.fcmToken = fcmToken;
+        this.rating = rating;
     }
 
     public Expert() {

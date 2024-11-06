@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.StorageReference;
 
 public class LogIn extends AppCompatActivity {
@@ -88,6 +89,21 @@ public class LogIn extends AppCompatActivity {
                                     Log.d("Login", "Client found: " + client.getEmail());
                                     if (client.getPassword().equals(password)) {
                                         Toast.makeText(LogIn.this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+                                        // Retrieve FCM token
+                                        FirebaseMessaging.getInstance().getToken()
+                                                .addOnCompleteListener(task -> {
+                                                    if (task.isSuccessful()) {
+                                                        String token = task.getResult();
+                                                        Log.d("FCM", "FCM Token for client: " + token);
+
+                                                        // Save token in client database entry
+                                                        reference.child("clients").child(clientSnapshot.getKey()).child("fcmToken").setValue(token);
+                                                    } else {
+                                                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                                                    }
+                                                });
+
                                         Intent intent = new Intent(LogIn.this, ClientHomePage.class);
                                         intent.putExtra("CLIENT_PHONE_NUMBER", client.getPhonenumber());
                                         startActivity(intent);
@@ -111,6 +127,21 @@ public class LogIn extends AppCompatActivity {
                                                     Log.d("Login", "Expert found: " + expertUser.getEmail());
                                                     if (expertUser.getPassword().equals(password)) {
                                                         Toast.makeText(LogIn.this, "Login Successful", Toast.LENGTH_SHORT).show();
+
+                                                        // Retrieve FCM token
+                                                        FirebaseMessaging.getInstance().getToken()
+                                                                .addOnCompleteListener(task -> {
+                                                                    if (task.isSuccessful()) {
+                                                                        String token = task.getResult();
+                                                                        Log.d("FCM", "FCM Token for expert: " + token);
+
+                                                                        // Save token in expert database entry
+                                                                        reference.child("experts").child(expert.getKey()).child("fcmToken").setValue(token);
+                                                                    } else {
+                                                                        Log.w("FCM", "Fetching FCM registration token failed", task.getException());
+                                                                    }
+                                                                });
+
                                                         Intent intent = new Intent(LogIn.this, ExpertHomePage.class);
                                                         intent.putExtra("EXPERT_PHONE_NUMBER", expertUser.getPhonenumber());
                                                         startActivity(intent);
