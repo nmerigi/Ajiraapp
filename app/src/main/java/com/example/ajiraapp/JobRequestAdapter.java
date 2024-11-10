@@ -43,7 +43,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
         this.expertsRef = FirebaseDatabase.getInstance().getReference("experts");
     }
 
-    //inflates clientinfo xml that will now show each job
+
     @NonNull
     @Override
     public JobRequestViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -69,6 +69,9 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
                             String clientLocation = clientSnapshot.child("location").getValue(String.class);
                             Long ratingValue = clientSnapshot.child("rating").getValue(Long.class);
                             String clientRating = ratingValue != null ? String.valueOf(ratingValue) : "Unknown";
+                            String clientPhoneNumber = jobRequest.getClientPhoneNumber();
+                            String expertPhoneNumber = jobRequest.getExpertPhoneNumber();
+
 
                             holder.clientName.setText(fullName);
                             holder.clientLocation.setText(clientLocation);
@@ -87,7 +90,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
 
                                                 // Set accept button click listener with expert's name
                                                 holder.accept_button.setOnClickListener(v -> {
-                                                    String jobId = jobRequest.getjobId();  // Ensure jobId is correctly retrieved from jobRequest
+                                                    String jobId = jobRequest.getjobId();
                                                     DatabaseReference jobRef = FirebaseDatabase.getInstance().getReference("Jobs").child(jobId);
 
                                                     // Update the status to "Accepted"
@@ -98,6 +101,8 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
                                                             Intent intent = new Intent(context, WorkInProgressExpert.class);
                                                             intent.putExtra("JOB_ID", jobId);
                                                             intent.putExtra("EXPERT_NAME", expertName);
+                                                            intent.putExtra("CLIENT_PHONE_NUMBER", clientPhoneNumber);
+                                                            intent.putExtra("EXPERT_CONTACT", expertPhoneNumber);
                                                             context.startActivity(intent);
 
                                                             Log.d("JobRequestAdapter", "Job status updated to 'Accepted'");

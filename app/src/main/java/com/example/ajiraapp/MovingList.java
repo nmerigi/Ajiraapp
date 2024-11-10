@@ -72,7 +72,7 @@ public class MovingList extends AppCompatActivity {
                 list.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Expert expert = dataSnapshot.getValue(Expert.class);
-                    if (expert != null && "Cleaning".equals(expert.getService())) {
+                    if (expert != null && "Moving".equals(expert.getService())) {
                         list.add(expert);
                     }
                 }

@@ -78,6 +78,7 @@
     </androidx.cardview.widget.CardView>
 
     <Button
+        android:id="@+id/sos_button"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:text="SOS"

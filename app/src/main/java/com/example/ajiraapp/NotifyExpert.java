@@ -42,6 +42,8 @@ public class NotifyExpert extends AppCompatActivity {
     Button create_jobButton;
     DatabaseReference jobsDatabase;
     String jobId;  // Store the job ID to listen for updates
+    String clientPhoneNumber;  // Declare clientPhoneNumber as a class-level variable
+    String expertPhoneNumber;  // Declare expertPhoneNumber as a class-level variable
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +59,8 @@ public class NotifyExpert extends AppCompatActivity {
         String expertName = intent.getStringExtra("EXPERT_NAME");
         String expertService = intent.getStringExtra("EXPERT_SERVICE");
         String serviceCharge = intent.getStringExtra("EXPERT_CHARGE");
-        String expertPhoneNumber = intent.getStringExtra("EXPERT_CONTACT");
-        String clientPhoneNumber = intent.getStringExtra("CLIENT_PHONE_NUMBER");
+        expertPhoneNumber = intent.getStringExtra("EXPERT_CONTACT");  // Assign the value here
+        clientPhoneNumber = intent.getStringExtra("CLIENT_PHONE_NUMBER");  // Assign the value here
 
         expert_nameview.setText("Expert Name: " + expertName);
         expert_serviceview.setText("Expert Service: " + expertService);
@@ -93,7 +95,7 @@ public class NotifyExpert extends AppCompatActivity {
                 Toast.makeText(this, expertName + " has been notified of your job request", Toast.LENGTH_LONG).show();
 
                 // Now, let's start listening for job status changes
-                listenForJobStatusChanges( expertName);
+                listenForJobStatusChanges(expertName);
             } else {
                 Toast.makeText(NotifyExpert.this, "Failed to create job.", Toast.LENGTH_LONG).show();
             }
@@ -108,7 +110,7 @@ public class NotifyExpert extends AppCompatActivity {
                 String jobStatus = snapshot.getValue(String.class);
 
                 if (jobStatus != null && jobStatus.equals("Accepted")) {
-                    // If the job status isAccepted, notify the client
+                    // If the job status is Accepted, notify the client
                     showJobAcceptedPopup(expertName);
                 }
             }
@@ -130,11 +132,11 @@ public class NotifyExpert extends AppCompatActivity {
 
                     Intent intent = new Intent(NotifyExpert.this, WorkInProgressClient.class);
                     intent.putExtra("JOB_ID", jobId);
+                    intent.putExtra("CLIENT_PHONE_NUMBER", clientPhoneNumber);
+                    intent.putExtra("EXPERT_CONTACT", expertPhoneNumber);
                     startActivity(intent);
                 })
                 .setCancelable(false)
                 .show();
     }
-
-
 }
