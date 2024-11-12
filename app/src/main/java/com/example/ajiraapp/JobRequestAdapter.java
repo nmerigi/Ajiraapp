@@ -41,7 +41,31 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
         this.context = context;
         this.clientsRef = FirebaseDatabase.getInstance().getReference("clients");
         this.expertsRef = FirebaseDatabase.getInstance().getReference("experts");
+
+        // Filter for jobs with "Pending" status
+        filterPendingJobs();
     }
+
+    private void filterPendingJobs() {
+        DatabaseReference jobsRef = FirebaseDatabase.getInstance().getReference("Jobs");
+        jobsRef.orderByChild("status").equalTo("Pending").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                jobRequests.clear();  // Clear the list before adding new data
+                for (DataSnapshot jobSnapshot : snapshot.getChildren()) {
+                    Jobs job = jobSnapshot.getValue(Jobs.class);
+                    jobRequests.add(job);  // Add only pending jobs
+                }
+                notifyDataSetChanged();  // Refresh the RecyclerView
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("JobRequestAdapter", "Error fetching jobs: " + error.getMessage());
+            }
+        });
+    }
+
 
 
     @NonNull
@@ -75,7 +99,9 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
 
                             holder.clientName.setText(fullName);
                             holder.clientLocation.setText(clientLocation);
+                            holder.clientRating.setText(clientPhoneNumber);
                             holder.clientRating.setText(clientRating);
+
 
                             //for notifications letsssss get the client token
                             //String clientFCMToken = clientSnapshot.child("fcmToken").getValue(String.class);
@@ -130,6 +156,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
                             holder.clientName.setText("Unknown");
                             holder.clientLocation.setText("Unknown");
                             holder.clientRating.setText("Unknown");
+                            holder.clientContact.setText("Unknown");
                         }
                     }
 
@@ -150,7 +177,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
     }
 
     public static class JobRequestViewHolder extends RecyclerView.ViewHolder {
-        TextView clientName, clientLocation, clientRating;
+        TextView clientName, clientLocation, clientRating, clientContact;
         Button accept_button;
 
         public JobRequestViewHolder(@NonNull View itemView) {
@@ -158,6 +185,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
             clientName = itemView.findViewById(R.id.ClientName);
             clientLocation = itemView.findViewById(R.id.Location);
             clientRating = itemView.findViewById(R.id.Rating);
+            clientContact = itemView.findViewById(R.id.Contact);
             accept_button= itemView.findViewById(R.id.accept_button);
         }
     }

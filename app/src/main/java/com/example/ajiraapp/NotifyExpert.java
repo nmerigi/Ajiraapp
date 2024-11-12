@@ -79,6 +79,9 @@ public class NotifyExpert extends AppCompatActivity {
             } else if (!isExpertPhoneNumberValid) {
                 Toast.makeText(NotifyExpert.this, "Expert phone number is missing.", Toast.LENGTH_LONG).show();
             } else {
+                // Disable the button to prevent multiple clicks
+                create_jobButton.setEnabled(false);
+                Toast.makeText(NotifyExpert.this, "Job request already submitted", Toast.LENGTH_LONG).show();
                 createJob(expertPhoneNumber, clientPhoneNumber, expertName);
             }
         });
@@ -98,6 +101,8 @@ public class NotifyExpert extends AppCompatActivity {
                 listenForJobStatusChanges(expertName);
             } else {
                 Toast.makeText(NotifyExpert.this, "Failed to create job.", Toast.LENGTH_LONG).show();
+                // Re-enable the button if the job creation fails
+                create_jobButton.setEnabled(true);
             }
         });
     }

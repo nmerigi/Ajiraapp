@@ -16,6 +16,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,8 +121,10 @@ public class Client_RatingandPayment extends AppCompatActivity {
                             averageRating = totalRating / count;
                         }
 
-                        String formattedRating = String.format("%.2f", averageRating);
-                        float finalRating = Float.parseFloat(formattedRating);
+                        // Round to two decimal places using BigDecimal
+                        BigDecimal roundedRating = new BigDecimal(averageRating)
+                                .setScale(2, RoundingMode.HALF_UP);
+                        float finalRating = roundedRating.floatValue();
 
 
                         // Reference to the experts table, querying by phone number
