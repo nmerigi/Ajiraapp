@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 public class ClientHomePage extends AppCompatActivity {
     private CardView cleaningCard, cookingCard, mechanicCard, gardeningCard, movingCard, plumbingCard;
     private String clientPhoneNumber;
+    private TextView logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,8 @@ public class ClientHomePage extends AppCompatActivity {
         gardeningCard = findViewById(R.id.gardeningCard);
         movingCard = findViewById(R.id.movingCard);
         plumbingCard = findViewById(R.id.plumbingCard);
+
+        logout=findViewById(R.id.logout);
 
         //picking the client phone number so i can tell who logged in and is selecting
         Intent intent = getIntent();
@@ -85,6 +89,14 @@ public class ClientHomePage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(ClientHomePage.this, PlumbingList.class);
                 intent.putExtra("CLIENT_PHONE_NUMBER", clientPhoneNumber);
+                startActivity(intent);
+            }
+        });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ClientHomePage.this, LogIn.class);
                 startActivity(intent);
             }
         });

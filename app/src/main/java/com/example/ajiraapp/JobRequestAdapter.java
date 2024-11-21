@@ -99,7 +99,7 @@ public class JobRequestAdapter extends RecyclerView.Adapter<JobRequestAdapter.Jo
 
                             holder.clientName.setText(fullName);
                             holder.clientLocation.setText(clientLocation);
-                            holder.clientRating.setText(clientPhoneNumber);
+                            holder.clientContact.setText(clientPhoneNumber);
                             holder.clientRating.setText(clientRating);
 
 

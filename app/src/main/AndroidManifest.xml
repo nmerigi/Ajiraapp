@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
-
     <!-- Permissions for accessing storage, SMS, and location -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <!-- Specify telephony feature as optional -->
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
-
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Specify telephony feature as optional -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +21,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AjiraApp"
         tools:targetApi="31">
+
+        <!-- SplashScreen is now the launcher activity -->
+        <activity
+            android:name=".SplashScreen"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Other activities -->
         <activity
             android:name=".Expert_Rating"
             android:exported="false" />
@@ -71,12 +80,7 @@
             android:exported="false" />
         <activity
             android:name=".SignUp"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:exported="false">
         </activity>
     </application>
 

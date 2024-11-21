@@ -1,6 +1,7 @@
 package com.example.ajiraapp;
 
 import android.content.Intent;
+import android.net.ParseException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -23,6 +24,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class SignUp extends AppCompatActivity {
 
@@ -139,8 +144,9 @@ public class SignUp extends AppCompatActivity {
     }
 
     private void handleSignup() {
-        // Get user inputs and store in Firebase
         if (radioClient.isChecked()) {
+            if (!validateClientFields()) return;
+
             String firstname = clientFirstname.getText().toString();
             String lastname = clientLastname.getText().toString();
             String gender = getSelectedGender(clientGenderRadioGroup);
@@ -152,7 +158,6 @@ public class SignUp extends AppCompatActivity {
             String userid_upload = clientIdFilename.getText().toString();
             String goodconduct_upload = clientGoodConductFilename.getText().toString();
 
-            // Create a new client object
             Client client = new Client(firstname, lastname, email, gender, dob, phonenumber, location, password, userid_upload, goodconduct_upload, 5.0);
 
             reference = database.getReference("clients");
@@ -166,6 +171,8 @@ public class SignUp extends AppCompatActivity {
                 }
             });
         } else {
+            if (!validateExpertFields()) return;
+
             String firstname = expertFirstname.getText().toString();
             String lastname = expertLastname.getText().toString();
             String gender = getSelectedGender(expertGenderRadioGroup);
@@ -178,7 +185,6 @@ public class SignUp extends AppCompatActivity {
             String servicecharge = expertServiceCharge.getText().toString();
             String userid_upload = expertIdFilename.getText().toString();
             String goodconduct_upload = expertGoodConductFilename.getText().toString();
-
 
             Expert expert = new Expert(firstname, lastname, email, gender, dob, phonenumber, location, password, service, servicecharge, userid_upload, goodconduct_upload,5.0);
 
@@ -193,9 +199,101 @@ public class SignUp extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private boolean validateClientFields() {
+        if (isFieldEmpty(clientFirstname) || isFieldEmpty(clientLastname) || isFieldEmpty(clientEmail) || isFieldEmpty(clientDob)
+                || isFieldEmpty(clientPhonenumber) || isFieldEmpty(clientLocation) || isFieldEmpty(clientPassword)) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (clientPassword.getText().toString().length() < 7) {
+            Toast.makeText(this, "Password must be at least 7 characters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (clientPhonenumber.getText().toString().length() != 10) {
+            Toast.makeText(this, "Phone number must be 10 digits", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        // Check age
+        int age = calculateAge(clientDob.getText().toString());
+        if (age < 18) {
+            Toast.makeText(this, "You must be at least 18 years old", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+
+
+    private boolean validateExpertFields() {
+        if (isFieldEmpty(expertFirstname) || isFieldEmpty(expertLastname) || isFieldEmpty(expertEmail) || isFieldEmpty(expertDob)
+                || isFieldEmpty(expertPhonenumber) || isFieldEmpty(expertLocation) || isFieldEmpty(expertPassword)
+                || isFieldEmpty(expertServiceCharge) || isFieldEmpty(autocompleteTextView)) {
+            Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (expertPassword.getText().toString().length() < 7) {
+            Toast.makeText(this, "Password must be at least 7 characters", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (expertPhonenumber.getText().toString().length() != 10) {
+            Toast.makeText(this, "Phone number must be 10 digits", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        int age = calculateAge(expertDob.getText().toString());
+        if (age < 18) {
+            Toast.makeText(this, "You must be at least 18 years old", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+
 
 
 }
+    // Calculate age based on date of birth
+    private int calculateAge(String dob) {
+        // Define the expected date format
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        dateFormat.setLenient(false);  // Ensure strict parsing
+
+        try {
+            // Parse the dob string to a Date object
+            Date birthDate = dateFormat.parse(dob);
+
+            // Get the birth year, month, and day
+            Calendar birthCalendar = Calendar.getInstance();
+            birthCalendar.setTime(birthDate);
+
+            int birthYear = birthCalendar.get(Calendar.YEAR);
+            int birthMonth = birthCalendar.get(Calendar.MONTH);
+            int birthDay = birthCalendar.get(Calendar.DAY_OF_MONTH);
+
+            // Get the current year, month, and day
+            Calendar currentCalendar = Calendar.getInstance();
+            int currentYear = currentCalendar.get(Calendar.YEAR);
+            int currentMonth = currentCalendar.get(Calendar.MONTH);
+            int currentDay = currentCalendar.get(Calendar.DAY_OF_MONTH);
+
+            // Calculate the age
+            int age = currentYear - birthYear;
+
+            // Adjust age if the birth date hasn't occurred yet this year
+            if (currentMonth < birthMonth || (currentMonth == birthMonth && currentDay < birthDay)) {
+                age--;
+            }
+
+            return age;
+        } catch (ParseException | java.text.ParseException e) {
+            Toast.makeText(this, "Invalid date format. Use dd/MM/yyyy.", Toast.LENGTH_SHORT).show();
+            return 0;
+        }
+    }
+
+    private boolean isFieldEmpty(EditText editText) {
+        return editText.getText().toString().trim().isEmpty();
+    }
 
     // Method to initialize the UI elements
     private void initializeElements() {

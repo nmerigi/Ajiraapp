@@ -3,6 +3,8 @@ package com.example.ajiraapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +24,7 @@ public class ExpertHomePage extends AppCompatActivity {
     private List<Jobs> jobList;
     private DatabaseReference jobsRef;
     private DatabaseReference clientsRef;
+    private TextView logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,7 @@ public class ExpertHomePage extends AppCompatActivity {
         jobList = new ArrayList<>();
         jobAdapter = new JobRequestAdapter(jobList,this);
         recyclerViewJobs.setAdapter(jobAdapter);
+        logout= findViewById(R.id.logout);
 
         // Get expert phone number from Intent
         Intent intent = getIntent();
@@ -50,6 +54,14 @@ public class ExpertHomePage extends AppCompatActivity {
 
         // Fetch job requests for the expert
         fetchJobRequests(expertPhoneNumber);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ExpertHomePage.this, LogIn.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void fetchJobRequests(String expertPhoneNumber) {

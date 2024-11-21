@@ -34,7 +34,11 @@ public class ExpertList_adapter extends RecyclerView.Adapter<ExpertList_adapter.
         Expert expert = list.get(position);
         holder.expert_name.setText(expert.getFullName());
         holder.service_charge.setText(expert.getServicecharge());
-        holder.expert_rating.setText(String.valueOf(expert.getRating()));
+
+        // Format the rating to two decimal places
+        String formattedRating = String.format("%.2f", expert.getRating());
+        holder.expert_rating.setText(formattedRating);
+
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, NotifyExpert.class);
