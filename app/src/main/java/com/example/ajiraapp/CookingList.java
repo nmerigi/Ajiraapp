@@ -47,17 +47,20 @@ public class CookingList extends AppCompatActivity {
         });
 
         recyclerView = findViewById(R.id.recycler);
+        maxbudget= findViewById(R.id.max_budget_input);
+        searchbutton= findViewById(R.id.search_button);
+
         database = FirebaseDatabase.getInstance().getReference("experts");
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         list = new ArrayList<>();
-        maxbudget= findViewById(R.id.max_budget_input);
-        searchbutton= findViewById(R.id.search_button);
+
 
         // Retrieve clientPhoneNumber from Intent
         Intent intent = getIntent();
         clientPhoneNumber = intent.getStringExtra("CLIENT_PHONE_NUMBER");
+
         expertListAdapter= new ExpertList_adapter(list,this,clientPhoneNumber);
         recyclerView.setAdapter(expertListAdapter);
 
@@ -117,7 +120,7 @@ public class CookingList extends AppCompatActivity {
                         filteredList.add(expert);
                     }
                 } catch (NumberFormatException e) {
-                    // Handle invalid range format if necessary, e.g., skip this expert
+
                 }
             }
         }

@@ -22,10 +22,9 @@ public class SplashScreen extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Start the next activity
                 Intent intent = new Intent(SplashScreen.this, LogIn.class);
                 startActivity(intent);
-                finish();  // Close the splash screen
+                finish();
             }
         }, 3000);
     }

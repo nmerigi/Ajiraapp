@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DIALOG" />
-        <DropdownSelection timestamp="2024-11-10T11:46:27.534666100Z">
+        <DropdownSelection timestamp="2024-11-22T11:42:49.182372800Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Nicole Merigi\.android\avd\Pixel_3_API_27.avd" />
@@ -15,7 +15,7 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="PhysicalDevice" identifier="serial=d625e547" />
+                <DeviceId pluginId="PhysicalDevice" identifier="serial=041872595A003797" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">

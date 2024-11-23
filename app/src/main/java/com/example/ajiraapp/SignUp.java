@@ -74,7 +74,7 @@ public class SignUp extends AppCompatActivity {
         clientFormContainer.setVisibility(View.VISIBLE);
         expertFormContainer.setVisibility(View.GONE);
 
-        // Setup the signup group listener for client/expert
+        // Setup the signup group listener for client/expert ......shows form depending on what they pick
         signupRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radio_client) {
                 clientFormContainer.setVisibility(View.VISIBLE);
@@ -161,6 +161,7 @@ public class SignUp extends AppCompatActivity {
             Client client = new Client(firstname, lastname, email, gender, dob, phonenumber, location, password, userid_upload, goodconduct_upload, 5.0);
 
             reference = database.getReference("clients");
+            //kwa 'client' push client instance that we just created
             reference.push().setValue(client).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(SignUp.this, "Sign Up Successful", Toast.LENGTH_SHORT).show();
