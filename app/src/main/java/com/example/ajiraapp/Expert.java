@@ -154,4 +154,13 @@ public class Expert {
     public String getFullName() {
         return firstname + " " + lastname;
     }
+
+    // Add this for testing purposes
+    public Expert(String firstname, String service, String servicecharge) {
+        this.firstname = firstname;
+        this.service = service;
+        this.servicecharge = servicecharge;
+
+    }
+
 }

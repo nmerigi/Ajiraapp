@@ -130,7 +130,7 @@ public class WorkInProgressExpert extends AppCompatActivity {
         try {
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(EMERGENCY_CONTACT, null, message, null, null);
-            Toast.makeText(this, "SOS message sent", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "SOS message sent", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             Toast.makeText(this, "Failed to send SOS message", Toast.LENGTH_SHORT).show();
         }

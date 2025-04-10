@@ -65,36 +65,27 @@ public class ExpertHomePage extends AppCompatActivity {
     }
 
     private void fetchJobRequests(String expertPhoneNumber) {
-        jobsRef.orderByChild("expertPhoneNumber").equalTo(expertPhoneNumber)
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        jobList.clear();
+        JobFetcher jobFetcher = new JobFetcher(jobsRef);
 
-                        // Check if any jobs exist for the given expert phone number
-                        if (snapshot.exists()) {
-                            Log.d("ExpertHomePage", "Jobs found for expert: " + expertPhoneNumber);
+        jobFetcher.fetchJobsForExpert(expertPhoneNumber, new JobFetcher.JobFetchCallback() {
+            @Override
+            public void onJobsFetched(List<Jobs> jobs) {
+                jobList.clear();
+                jobList.addAll(jobs);
+                jobAdapter.notifyDataSetChanged();
 
-                            for (DataSnapshot jobSnapshot : snapshot.getChildren()) {
-                                Jobs job = jobSnapshot.getValue(Jobs.class);
-                                if (job != null) {
-                                    jobList.add(job);
-                                }
-                            }
-                            jobAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d("ExpertHomePage", "No jobs found for expert: " + expertPhoneNumber);
-                            // Optionally, you can show a message to the user
-                            Toast.makeText(ExpertHomePage.this, "No jobs found for this expert.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                if (jobs.isEmpty()) {
+                    Toast.makeText(ExpertHomePage.this, "No jobs found for this expert.", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("ExpertHomePage", "Error fetching job requests: " + error.getMessage());
-                        Toast.makeText(ExpertHomePage.this, "Failed to load job requests.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onError(String errorMessage) {
+                Log.e("ExpertHomePage", "Error fetching jobs: " + errorMessage);
+                Toast.makeText(ExpertHomePage.this, "Failed to load job requests.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
 
 }
